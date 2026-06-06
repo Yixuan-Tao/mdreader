@@ -1,0 +1,476 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		100000000000000000000001 /* MdReaderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000101 /* MdReaderApp.swift */; };
+		100000000000000000000002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000102 /* ContentView.swift */; };
+		100000000000000000000003 /* EditableDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000103 /* EditableDocument.swift */; };
+		100000000000000000000004 /* DocumentStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000104 /* DocumentStore.swift */; };
+		100000000000000000000005 /* DocumentPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000105 /* DocumentPicker.swift */; };
+		100000000000000000000006 /* EditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000106 /* EditorView.swift */; };
+		100000000000000000000007 /* MarkdownPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000107 /* MarkdownPreview.swift */; };
+		100000000000000000000008 /* HTMLPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000108 /* HTMLPreview.swift */; };
+		100000000000000000000009 /* ExportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000109 /* ExportService.swift */; };
+		10000000000000000000000A /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000010A /* ShareSheet.swift */; };
+		10000000000000000000000B /* mdreaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000010B /* mdreaderTests.swift */; };
+		10000000000000000000000C /* SampleDocumentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000010D /* SampleDocumentService.swift */; };
+		10000000000000000000000D /* SampleMarkdown.md in Resources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000010E /* SampleMarkdown.md */; };
+		10000000000000000000000E /* SampleHTML.html in Resources */ = {isa = PBXBuildFile; fileRef = 10000000000000000000010F /* SampleHTML.html */; };
+		10000000000000000000000F /* NewDocumentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000110 /* NewDocumentService.swift */; };
+		100000000000000000000010 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000111 /* SettingsStore.swift */; };
+		100000000000000000000011 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000112 /* SettingsView.swift */; };
+		100000000000000000000012 /* PlainTextPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000113 /* PlainTextPreview.swift */; };
+		100000000000000000000013 /* SampleText.txt in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000114 /* SampleText.txt */; };
+		100000000000000000000014 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000115 /* PrivacyInfo.xcprivacy */; };
+		100000000000000000000015 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 100000000000000000000116 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		100000000000000000000201 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 100000000000000000000301 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 100000000000000000000401;
+			remoteInfo = mdreader;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		100000000000000000000101 /* MdReaderApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MdReaderApp.swift; sourceTree = "<group>"; };
+		100000000000000000000102 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		100000000000000000000103 /* EditableDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditableDocument.swift; sourceTree = "<group>"; };
+		100000000000000000000104 /* DocumentStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentStore.swift; sourceTree = "<group>"; };
+		100000000000000000000105 /* DocumentPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentPicker.swift; sourceTree = "<group>"; };
+		100000000000000000000106 /* EditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditorView.swift; sourceTree = "<group>"; };
+		100000000000000000000107 /* MarkdownPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownPreview.swift; sourceTree = "<group>"; };
+		100000000000000000000108 /* HTMLPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLPreview.swift; sourceTree = "<group>"; };
+		100000000000000000000109 /* ExportService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExportService.swift; sourceTree = "<group>"; };
+		10000000000000000000010A /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
+		10000000000000000000010B /* mdreaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mdreaderTests.swift; sourceTree = "<group>"; };
+		10000000000000000000010C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		10000000000000000000010D /* SampleDocumentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleDocumentService.swift; sourceTree = "<group>"; };
+		10000000000000000000010E /* SampleMarkdown.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = SampleMarkdown.md; sourceTree = "<group>"; };
+		10000000000000000000010F /* SampleHTML.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = SampleHTML.html; sourceTree = "<group>"; };
+		100000000000000000000110 /* NewDocumentService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewDocumentService.swift; sourceTree = "<group>"; };
+		100000000000000000000111 /* SettingsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStore.swift; sourceTree = "<group>"; };
+		100000000000000000000112 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		100000000000000000000113 /* PlainTextPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlainTextPreview.swift; sourceTree = "<group>"; };
+		100000000000000000000114 /* SampleText.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = SampleText.txt; sourceTree = "<group>"; };
+		100000000000000000000115 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		100000000000000000000116 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		100000000000000000000501 /* mdreader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mdreader.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		100000000000000000000502 /* mdreaderTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = mdreaderTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		100000000000000000000601 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		100000000000000000000602 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		100000000000000000000701 = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000702 /* mdreader */,
+				100000000000000000000706 /* mdreaderTests */,
+				100000000000000000000707 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		100000000000000000000702 /* mdreader */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000101 /* MdReaderApp.swift */,
+				100000000000000000000102 /* ContentView.swift */,
+				100000000000000000000703 /* Models */,
+				100000000000000000000704 /* Services */,
+				100000000000000000000705 /* Views */,
+				100000000000000000000708 /* Resources */,
+				100000000000000000000116 /* Assets.xcassets */,
+				100000000000000000000115 /* PrivacyInfo.xcprivacy */,
+				10000000000000000000010C /* Info.plist */,
+			);
+			path = mdreader;
+			sourceTree = "<group>";
+		};
+		100000000000000000000703 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000103 /* EditableDocument.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		100000000000000000000704 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000104 /* DocumentStore.swift */,
+				100000000000000000000109 /* ExportService.swift */,
+				10000000000000000000010D /* SampleDocumentService.swift */,
+				100000000000000000000110 /* NewDocumentService.swift */,
+				100000000000000000000111 /* SettingsStore.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		100000000000000000000705 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000105 /* DocumentPicker.swift */,
+				100000000000000000000106 /* EditorView.swift */,
+				100000000000000000000107 /* MarkdownPreview.swift */,
+				100000000000000000000108 /* HTMLPreview.swift */,
+				100000000000000000000113 /* PlainTextPreview.swift */,
+				10000000000000000000010A /* ShareSheet.swift */,
+				100000000000000000000112 /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		100000000000000000000706 /* mdreaderTests */ = {
+			isa = PBXGroup;
+			children = (
+				10000000000000000000010B /* mdreaderTests.swift */,
+			);
+			path = mdreaderTests;
+			sourceTree = "<group>";
+		};
+		100000000000000000000707 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				100000000000000000000501 /* mdreader.app */,
+				100000000000000000000502 /* mdreaderTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		100000000000000000000708 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				10000000000000000000010E /* SampleMarkdown.md */,
+				10000000000000000000010F /* SampleHTML.html */,
+				100000000000000000000114 /* SampleText.txt */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		100000000000000000000401 /* mdreader */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 100000000000000000000801 /* Build configuration list for PBXNativeTarget "mdreader" */;
+			buildPhases = (
+				100000000000000000000901 /* Sources */,
+				100000000000000000000601 /* Frameworks */,
+				100000000000000000000902 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = mdreader;
+			productName = mdreader;
+			productReference = 100000000000000000000501 /* mdreader.app */;
+			productType = "com.apple.product-type.application";
+		};
+		100000000000000000000402 /* mdreaderTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 100000000000000000000802 /* Build configuration list for PBXNativeTarget "mdreaderTests" */;
+			buildPhases = (
+				100000000000000000000903 /* Sources */,
+				100000000000000000000602 /* Frameworks */,
+				100000000000000000000904 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				100000000000000000000202 /* PBXTargetDependency */,
+			);
+			name = mdreaderTests;
+			productName = mdreaderTests;
+			productReference = 100000000000000000000502 /* mdreaderTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		100000000000000000000301 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2650;
+				LastUpgradeCheck = 2650;
+				TargetAttributes = {
+					100000000000000000000401 = {
+						CreatedOnToolsVersion = 26.5;
+					};
+					100000000000000000000402 = {
+						CreatedOnToolsVersion = 26.5;
+						TestTargetID = 100000000000000000000401;
+					};
+				};
+			};
+			buildConfigurationList = 100000000000000000000803 /* Build configuration list for PBXProject "mdreader" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 100000000000000000000701;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 100000000000000000000707 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				100000000000000000000401 /* mdreader */,
+				100000000000000000000402 /* mdreaderTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		100000000000000000000902 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				10000000000000000000000D /* SampleMarkdown.md in Resources */,
+				10000000000000000000000E /* SampleHTML.html in Resources */,
+				100000000000000000000013 /* SampleText.txt in Resources */,
+				100000000000000000000014 /* PrivacyInfo.xcprivacy in Resources */,
+				100000000000000000000015 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		100000000000000000000904 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		100000000000000000000901 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				100000000000000000000001 /* MdReaderApp.swift in Sources */,
+				100000000000000000000002 /* ContentView.swift in Sources */,
+				100000000000000000000003 /* EditableDocument.swift in Sources */,
+				100000000000000000000004 /* DocumentStore.swift in Sources */,
+				100000000000000000000005 /* DocumentPicker.swift in Sources */,
+				100000000000000000000006 /* EditorView.swift in Sources */,
+				100000000000000000000007 /* MarkdownPreview.swift in Sources */,
+				100000000000000000000008 /* HTMLPreview.swift in Sources */,
+				100000000000000000000009 /* ExportService.swift in Sources */,
+				10000000000000000000000A /* ShareSheet.swift in Sources */,
+				10000000000000000000000C /* SampleDocumentService.swift in Sources */,
+				10000000000000000000000F /* NewDocumentService.swift in Sources */,
+				100000000000000000000010 /* SettingsStore.swift in Sources */,
+				100000000000000000000011 /* SettingsView.swift in Sources */,
+				100000000000000000000012 /* PlainTextPreview.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		100000000000000000000903 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				10000000000000000000000B /* mdreaderTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		100000000000000000000202 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 100000000000000000000401 /* mdreader */;
+			targetProxy = 100000000000000000000201 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		100000000000000000000A01 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		100000000000000000000A02 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		100000000000000000000A03 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = K9V7C5G4QZ;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = mdreader/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tommy.mdreader;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		100000000000000000000A04 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = K9V7C5G4QZ;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = mdreader/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.tommy.mdreader;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		100000000000000000000A05 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tommy.mdreader.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/mdreader.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/mdreader";
+			};
+			name = Debug;
+		};
+		100000000000000000000A06 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.tommy.mdreader.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/mdreader.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/mdreader";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		100000000000000000000801 /* Build configuration list for PBXNativeTarget "mdreader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				100000000000000000000A03 /* Debug */,
+				100000000000000000000A04 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		100000000000000000000802 /* Build configuration list for PBXNativeTarget "mdreaderTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				100000000000000000000A05 /* Debug */,
+				100000000000000000000A06 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		100000000000000000000803 /* Build configuration list for PBXProject "mdreader" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				100000000000000000000A01 /* Debug */,
+				100000000000000000000A02 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 100000000000000000000301 /* Project object */;
+}

@@ -1,0 +1,24 @@
+# Xcode
+DerivedData/
+build/
+*.xcuserstate
+*.xcscmblueprint
+xcuserdata/
+
+# Swift Package Manager
+.build/
+
+# macOS
+.DS_Store
+
+# Local verification screenshots
+/*.png
+
+# Archives and signing exports
+*.xcarchive
+*.ipa
+*.dSYM.zip
+
+# Temporary files
+*.tmp
+*.swp
