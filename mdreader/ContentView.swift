@@ -126,6 +126,7 @@ struct ContentView: View {
                     Label("Open Markdown, HTML, or Text", systemImage: "folder")
                 }
                 .buttonStyle(.borderless)
+                .keyboardShortcut("o", modifiers: [.command])
 
                 Menu {
                     Button {
@@ -133,6 +134,7 @@ struct ContentView: View {
                     } label: {
                         Label("Markdown", systemImage: "doc.badge.plus")
                     }
+                    .keyboardShortcut("n", modifiers: [.command])
 
                     Button {
                         store.createNewDocument(kind: .html)
@@ -186,6 +188,7 @@ struct ContentView: View {
                 } label: {
                     Label("Settings", systemImage: "gearshape")
                 }
+                .keyboardShortcut(",", modifiers: [.command])
             }
         }
     }

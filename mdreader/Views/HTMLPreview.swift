@@ -4,10 +4,11 @@ import WebKit
 struct HTMLPreview: UIViewRepresentable {
     let html: String
     let baseURL: URL?
+    var targetAnchor: String? = nil
     var onExternalLinkTapped: ((URL) -> Void)?
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(onExternalLinkTapped: onExternalLinkTapped)
+        Coordinator(targetAnchor: targetAnchor, onExternalLinkTapped: onExternalLinkTapped)
     }
 
     func makeUIView(context: Context) -> WKWebView {
@@ -23,6 +24,7 @@ struct HTMLPreview: UIViewRepresentable {
     }
 
     func updateUIView(_ webView: WKWebView, context: Context) {
+        context.coordinator.targetAnchor = targetAnchor
         context.coordinator.onExternalLinkTapped = onExternalLinkTapped
         webView.loadHTMLString(Self.securedHTML(html), baseURL: baseURL)
     }
@@ -53,10 +55,20 @@ struct HTMLPreview: UIViewRepresentable {
     }
 
     final class Coordinator: NSObject, WKNavigationDelegate {
+        var targetAnchor: String?
         var onExternalLinkTapped: ((URL) -> Void)?
 
-        init(onExternalLinkTapped: ((URL) -> Void)?) {
+        init(targetAnchor: String?, onExternalLinkTapped: ((URL) -> Void)?) {
+            self.targetAnchor = targetAnchor
             self.onExternalLinkTapped = onExternalLinkTapped
+        }
+
+        func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            guard let targetAnchor else { return }
+            let escapedAnchor = targetAnchor
+                .replacingOccurrences(of: "\\", with: "\\\\")
+                .replacingOccurrences(of: "'", with: "\\'")
+            webView.evaluateJavaScript("document.getElementById('\(escapedAnchor)')?.scrollIntoView();")
         }
 
         func webView(

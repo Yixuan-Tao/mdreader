@@ -33,7 +33,7 @@ final class mdreaderTests: XCTestCase {
         let html = MarkdownHTMLRenderer.render("# Hello <script>", title: "A & B")
 
         XCTAssertTrue(html.contains("A &amp; B"))
-        XCTAssertTrue(html.contains("<h1>Hello &lt;script&gt;</h1>"))
+        XCTAssertTrue(html.contains("<h1 id=\"hello-script\">Hello &lt;script&gt;</h1>"))
         XCTAssertFalse(html.contains("<script>"))
     }
 
@@ -56,11 +56,11 @@ final class mdreaderTests: XCTestCase {
         """
         let html = MarkdownHTMLRenderer.render(markdown, title: "Blocks")
 
-        XCTAssertTrue(html.contains("<h1>Title</h1>"))
+        XCTAssertTrue(html.contains("<h1 id=\"title\">Title</h1>"))
         XCTAssertTrue(html.contains("<p>First paragraph line continues here.</p>"))
         XCTAssertTrue(html.contains("<ul><li>One</li><li>Two</li></ul>"))
         XCTAssertTrue(html.contains("<ol><li>First</li><li>Second</li></ol>"))
-        XCTAssertTrue(html.contains("<pre><code>let app = &quot;mdreader&quot;</code></pre>"))
+        XCTAssertTrue(html.contains("<pre><code class=\"language-swift\" data-language=\"swift\">"))
     }
 
     func testMarkdownHTMLRendererSupportsInlineFormatting() {
@@ -87,6 +87,62 @@ final class mdreaderTests: XCTestCase {
         XCTAssertTrue(html.contains("<thead><tr><th>Name</th><th>Value</th></tr></thead>"))
         XCTAssertTrue(html.contains("<td>Map</td><td>Dragon Shire</td>"))
         XCTAssertTrue(html.contains("<td>Goal</td><td>Objective</td>"))
+    }
+
+    func testMarkdownHTMLRendererSupportsTaskLists() {
+        let markdown = """
+        - [ ] Write docs
+        - [x] Ship app
+        """
+        let html = MarkdownHTMLRenderer.render(markdown, title: "Tasks")
+
+        XCTAssertTrue(html.contains("class=\"task-list-item\""))
+        XCTAssertTrue(html.contains("□</span>Write docs"))
+        XCTAssertTrue(html.contains("☑</span>Ship app"))
+    }
+
+    func testMarkdownTableOfContentsUsesStableUniqueAnchors() {
+        let headings = MarkdownHTMLRenderer.tableOfContents(from: """
+        # README
+        ## Install
+        ### Install
+        #### Ignored
+        """)
+
+        XCTAssertEqual(headings, [
+            MarkdownHeading(level: 1, title: "README", anchor: "readme"),
+            MarkdownHeading(level: 2, title: "Install", anchor: "install"),
+            MarkdownHeading(level: 3, title: "Install", anchor: "install-2")
+        ])
+    }
+
+    func testMarkdownSearchHighlightsVisibleTextAndCountsMatches() {
+        let html = MarkdownHTMLRenderer.render("Find `find` and **Find**.", title: "Search", searchQuery: "find")
+
+        XCTAssertEqual(MarkdownHTMLRenderer.searchMatchCount(in: "Find find and Find", query: "find"), 3)
+        XCTAssertTrue(html.contains("<mark class=\"search-hit\">Find</mark>"))
+        XCTAssertTrue(html.contains("<code><mark class=\"search-hit\">find</mark></code>"))
+    }
+
+    func testMarkdownLargeDocumentRendersWithoutDroppingContent() {
+        let paragraph = """
+        ## Section
+
+        - [x] Task
+        | Name | Value |
+        | ---- | ----- |
+        | README | Local |
+
+        ```swift
+        let value = "developer"
+        ```
+        """
+        let markdown = Array(repeating: paragraph, count: 900).joined(separator: "\n")
+        let html = MarkdownHTMLRenderer.render(markdown, title: "Large")
+
+        XCTAssertTrue(html.contains("language-swift"))
+        XCTAssertTrue(html.contains("README"))
+        XCTAssertGreaterThan(html.count, markdown.count)
     }
 
     func testPlainTextHTMLRendererEscapesUnsafeCharacters() {
