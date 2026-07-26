@@ -38,6 +38,8 @@ echo "Running tests on simulator: ${device_name} (${device_udid})"
 xcrun simctl boot "$device_udid" 2>/dev/null || true
 sleep 15
 
+rm -rf "$ROOT_DIR/TestResults.xcresult"
+
 xcodebuild test \
   -project "$ROOT_DIR/mdreader.xcodeproj" \
   -scheme mdreader \
@@ -45,5 +47,6 @@ xcodebuild test \
   -sdk iphonesimulator \
   -destination "id=${device_udid}" \
   -destination-timeout 120 \
+  -resultBundlePath "$ROOT_DIR/TestResults.xcresult" \
   -derivedDataPath "$ROOT_DIR/DerivedData" \
   CODE_SIGNING_ALLOWED=NO

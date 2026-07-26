@@ -50,9 +50,6 @@ jobs:
             -derivedDataPath ./DerivedData \
             CODE_SIGNING_ALLOWED=NO
 
-      - name: Run XCTest on available iPhone Simulator
-        run: bash scripts/run_xcode_tests_on_available_simulator.sh
-
       - name: Build Release for iPhone and iPad
         run: |
           xcodebuild build \
@@ -62,3 +59,19 @@ jobs:
             -sdk iphoneos \
             -derivedDataPath ./DerivedData \
             CODE_SIGNING_ALLOWED=NO
+
+      - name: List available simulators
+        run: xcrun simctl list devices available
+
+      - name: Run XCTest on available iPhone Simulator
+        timeout-minutes: 8
+        run: bash scripts/run_xcode_tests_on_available_simulator.sh
+
+      - name: Upload XCTest diagnostics
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xctest-diagnostics
+          path: |
+            TestResults.xcresult
+            DerivedData/Logs/Test

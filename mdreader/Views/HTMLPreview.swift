@@ -24,9 +24,18 @@ struct HTMLPreview: UIViewRepresentable {
     }
 
     func updateUIView(_ webView: WKWebView, context: Context) {
-        context.coordinator.targetAnchor = targetAnchor
+        let securedHTML = Self.securedHTML(html)
+        let previousAnchor = context.coordinator.targetAnchor
+
         context.coordinator.onExternalLinkTapped = onExternalLinkTapped
-        webView.loadHTMLString(Self.securedHTML(html), baseURL: baseURL)
+        context.coordinator.targetAnchor = targetAnchor
+
+        if context.coordinator.shouldLoad(html: securedHTML, baseURL: baseURL) {
+            context.coordinator.recordLoaded(html: securedHTML, baseURL: baseURL)
+            webView.loadHTMLString(securedHTML, baseURL: baseURL)
+        } else if targetAnchor != previousAnchor {
+            context.coordinator.scrollToTargetAnchor(in: webView)
+        }
     }
 
     static func securedHTML(_ html: String) -> String {
@@ -55,6 +64,10 @@ struct HTMLPreview: UIViewRepresentable {
     }
 
     static func linkPolicy(for url: URL, currentURL: URL?) -> PreviewLinkPolicy {
+        if url.isBlankPageAnchor {
+            return .allowInPreview
+        }
+
         if let currentURL,
            url.removingFragment() == currentURL.removingFragment(),
            url.fragment != nil {
@@ -75,6 +88,8 @@ struct HTMLPreview: UIViewRepresentable {
     final class Coordinator: NSObject, WKNavigationDelegate {
         var targetAnchor: String?
         var onExternalLinkTapped: ((URL) -> Void)?
+        private var lastLoadedHTML: String?
+        private var lastLoadedBaseURL: URL?
 
         init(targetAnchor: String?, onExternalLinkTapped: ((URL) -> Void)?) {
             self.targetAnchor = targetAnchor
@@ -82,6 +97,19 @@ struct HTMLPreview: UIViewRepresentable {
         }
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+            scrollToTargetAnchor(in: webView)
+        }
+
+        func shouldLoad(html: String, baseURL: URL?) -> Bool {
+            lastLoadedHTML != html || lastLoadedBaseURL != baseURL
+        }
+
+        func recordLoaded(html: String, baseURL: URL?) {
+            lastLoadedHTML = html
+            lastLoadedBaseURL = baseURL
+        }
+
+        func scrollToTargetAnchor(in webView: WKWebView) {
             guard let targetAnchor else { return }
             let escapedAnchor = targetAnchor
                 .replacingOccurrences(of: "\\", with: "\\\\")
@@ -120,6 +148,10 @@ enum PreviewLinkPolicy: Equatable {
 }
 
 private extension URL {
+    var isBlankPageAnchor: Bool {
+        scheme?.lowercased() == "about" && host == nil && path == "blank" && fragment != nil
+    }
+
     func removingFragment() -> URL {
         guard var components = URLComponents(url: self, resolvingAgainstBaseURL: false) else {
             return self

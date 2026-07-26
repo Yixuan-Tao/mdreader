@@ -186,6 +186,13 @@ final class mdreaderTests: XCTestCase {
         XCTAssertEqual(HTMLPreview.linkPolicy(for: targetURL, currentURL: currentURL), .allowInPreview)
     }
 
+    func testHTMLPreviewAllowsBlankPageAnchorNavigation() throws {
+        let currentURL = try XCTUnwrap(URL(string: "about:blank"))
+        let targetURL = try XCTUnwrap(URL(string: "about:blank#install"))
+
+        XCTAssertEqual(HTMLPreview.linkPolicy(for: targetURL, currentURL: currentURL), .allowInPreview)
+    }
+
     func testHTMLPreviewPromptsForExternalWebLinks() throws {
         let currentURL = try XCTUnwrap(URL(string: "file:///Documents/README.md"))
         let targetURL = try XCTUnwrap(URL(string: "https://example.com/docs"))
