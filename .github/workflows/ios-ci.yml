@@ -75,3 +75,4 @@ jobs:
           path: |
             TestResults.xcresult
             DerivedData/Logs/Test
+            xcodebuild-test.log

@@ -39,7 +39,9 @@ xcrun simctl boot "$device_udid" 2>/dev/null || true
 sleep 15
 
 rm -rf "$ROOT_DIR/TestResults.xcresult"
+rm -f "$ROOT_DIR/xcodebuild-test.log"
 
+set +e
 xcodebuild test \
   -project "$ROOT_DIR/mdreader.xcodeproj" \
   -scheme mdreader \
@@ -49,4 +51,25 @@ xcodebuild test \
   -destination-timeout 120 \
   -resultBundlePath "$ROOT_DIR/TestResults.xcresult" \
   -derivedDataPath "$ROOT_DIR/DerivedData" \
-  CODE_SIGNING_ALLOWED=NO
+  CODE_SIGNING_ALLOWED=NO 2>&1 | tee "$ROOT_DIR/xcodebuild-test.log"
+test_status="${PIPESTATUS[0]}"
+set -e
+
+if [[ "$test_status" -ne 0 ]]; then
+  echo "XCTest failed with exit code ${test_status}. Last 200 xcodebuild log lines:"
+  tail -n 200 "$ROOT_DIR/xcodebuild-test.log"
+
+  if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
+    {
+      echo "## XCTest failure"
+      echo
+      echo "Exit code: ${test_status}"
+      echo
+      echo '```text'
+      tail -n 200 "$ROOT_DIR/xcodebuild-test.log"
+      echo '```'
+    } >> "$GITHUB_STEP_SUMMARY"
+  fi
+
+  exit "$test_status"
+fi
