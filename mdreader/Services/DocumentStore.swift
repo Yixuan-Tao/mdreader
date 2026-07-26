@@ -9,6 +9,7 @@ final class DocumentStore: ObservableObject {
         case pending
         case saving
         case saved(Date)
+        case readOnly
         case failed(String)
 
         var label: String {
@@ -21,6 +22,8 @@ final class DocumentStore: ObservableObject {
                 return "Saving..."
             case .saved:
                 return "Saved"
+            case .readOnly:
+                return "Read Only"
             case .failed:
                 return "Save failed"
             }
@@ -65,8 +68,9 @@ final class DocumentStore: ObservableObject {
         }
 
         do {
-            currentDocument = try loadDocument(url: url, kind: kind)
-            saveState = .saved(.now)
+            let document = try loadDocument(url: url, kind: kind)
+            currentDocument = document
+            saveState = document.isReadOnly ? .readOnly : .saved(.now)
             remember(url: url, kind: kind)
         } catch {
             if didStartAccessing {
@@ -98,8 +102,9 @@ final class DocumentStore: ObservableObject {
                 activeSecurityURL = url
             }
 
-            currentDocument = try loadDocument(url: url, kind: kind)
-            saveState = .saved(.now)
+            let document = try loadDocument(url: url, kind: kind)
+            currentDocument = document
+            saveState = document.isReadOnly ? .readOnly : .saved(.now)
             remember(url: url, kind: kind)
         } catch {
             if showsUnavailableAlert {
@@ -165,10 +170,18 @@ final class DocumentStore: ObservableObject {
 
     func updateText(_ text: String) {
         guard var document = currentDocument else { return }
+        guard !document.isReadOnly else { return }
         document.text = text
         document.isModified = true
         currentDocument = document
         scheduleAutosave()
+    }
+
+    func setCurrentDocumentReadOnly(_ isReadOnly: Bool) {
+        guard var document = currentDocument else { return }
+        document.isReadOnly = isReadOnly
+        currentDocument = document
+        saveState = isReadOnly ? .readOnly : .saved(.now)
     }
 
     func saveImmediately() {
@@ -190,6 +203,10 @@ final class DocumentStore: ObservableObject {
 
     private func saveCurrentDocument() async {
         guard var document = currentDocument else { return }
+        guard !document.isReadOnly else {
+            saveState = .readOnly
+            return
+        }
         saveState = .saving
 
         do {
@@ -206,7 +223,22 @@ final class DocumentStore: ObservableObject {
 
     private func loadDocument(url: URL, kind: DocumentKind) throws -> EditableDocument {
         let text = try String(contentsOf: url, encoding: .utf8)
-        return EditableDocument(url: url, kind: kind, text: text)
+        return EditableDocument(url: url, kind: kind, text: text, isReadOnly: !isAppManagedDocument(url))
+    }
+
+    private func isAppManagedDocument(_ url: URL) -> Bool {
+        guard let documentsURL = try? FileManager.default.url(
+            for: .documentDirectory,
+            in: .userDomainMask,
+            appropriateFor: nil,
+            create: false
+        ) else {
+            return false
+        }
+
+        let documentPath = url.standardizedFileURL.path
+        let appDocumentsPath = documentsURL.standardizedFileURL.path
+        return documentPath == appDocumentsPath || documentPath.hasPrefix(appDocumentsPath + "/")
     }
 
     private func remember(url: URL, kind: DocumentKind) {

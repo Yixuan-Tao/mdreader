@@ -54,6 +54,24 @@ struct HTMLPreview: UIViewRepresentable {
         """
     }
 
+    static func linkPolicy(for url: URL, currentURL: URL?) -> PreviewLinkPolicy {
+        if let currentURL,
+           url.removingFragment() == currentURL.removingFragment(),
+           url.fragment != nil {
+            return .allowInPreview
+        }
+
+        guard let scheme = url.scheme?.lowercased() else {
+            return .cancel
+        }
+
+        if scheme == "http" || scheme == "https" {
+            return .openExternally
+        }
+
+        return .cancel
+    }
+
     final class Coordinator: NSObject, WKNavigationDelegate {
         var targetAnchor: String?
         var onExternalLinkTapped: ((URL) -> Void)?
@@ -82,29 +100,23 @@ struct HTMLPreview: UIViewRepresentable {
                 return
             }
 
-            if shouldOpenExternally(url: url, currentURL: webView.url) {
+            switch HTMLPreview.linkPolicy(for: url, currentURL: webView.url) {
+            case .allowInPreview:
+                decisionHandler(.allow)
+            case .openExternally:
                 onExternalLinkTapped?(url)
                 decisionHandler(.cancel)
-                return
+            case .cancel:
+                decisionHandler(.cancel)
             }
-
-            decisionHandler(.allow)
-        }
-
-        private func shouldOpenExternally(url: URL, currentURL: URL?) -> Bool {
-            guard url.scheme == "http" || url.scheme == "https" else {
-                return false
-            }
-
-            if let currentURL,
-               url.removingFragment() == currentURL.removingFragment(),
-               url.fragment != nil {
-                return false
-            }
-
-            return true
         }
     }
+}
+
+enum PreviewLinkPolicy: Equatable {
+    case allowInPreview
+    case openExternally
+    case cancel
 }
 
 private extension URL {

@@ -1,0 +1,60 @@
+name: iOS CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    name: Static checks and Xcode build
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: |
+          xcodebuild -version
+          xcode-select -p
+
+      - name: App Store static readiness checks
+        run: bash scripts/validate_app_store_ready.sh
+
+      - name: Build Debug for iOS Simulator
+        run: |
+          xcodebuild build \
+            -project mdreader.xcodeproj \
+            -scheme mdreader \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -derivedDataPath ./DerivedData \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Build test bundle for iOS Simulator
+        run: |
+          xcodebuild build-for-testing \
+            -project mdreader.xcodeproj \
+            -scheme mdreader \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -derivedDataPath ./DerivedData \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Run XCTest on available iPhone Simulator
+        run: bash scripts/run_xcode_tests_on_available_simulator.sh
+
+      - name: Build Release for iPhone and iPad
+        run: |
+          xcodebuild build \
+            -project mdreader.xcodeproj \
+            -scheme mdreader \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath ./DerivedData \
+            CODE_SIGNING_ALLOWED=NO

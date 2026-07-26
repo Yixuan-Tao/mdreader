@@ -15,8 +15,15 @@ struct EditorView: View {
     @State private var searchQuery = ""
     @State private var isTableOfContentsVisible = false
     @State private var targetAnchor: String?
+    @State private var regularDisplayMode = RegularEditorDisplayMode.split
 
     let document: EditableDocument
+    var onFocusModeChanged: ((Bool) -> Void)?
+
+    init(document: EditableDocument, onFocusModeChanged: ((Bool) -> Void)? = nil) {
+        self.document = document
+        self.onFocusModeChanged = onFocusModeChanged
+    }
 
     var body: some View {
         Group {
@@ -26,13 +33,17 @@ struct EditorView: View {
                 regularEditor
             }
         }
-        .navigationTitle(document.fileName)
+        .navigationTitle(horizontalSizeClass == .compact ? document.fileName : "")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text(store.saveState.label)
-                    .font(.caption)
-                    .foregroundStyle(statusColor)
+            if horizontalSizeClass == .compact {
+                ToolbarItem(placement: .principal) {
+                    saveStatusLabel
+                }
+            } else {
+                ToolbarItem(placement: .topBarTrailing) {
+                    saveStatusLabel
+                }
             }
 
             ToolbarItem(placement: .primaryAction) {
@@ -43,6 +54,16 @@ struct EditorView: View {
                         .keyboardShortcut("p", modifiers: [.command])
                 } label: {
                     Label("Export", systemImage: "square.and.arrow.up")
+                }
+            }
+
+            if isCurrentDocumentReadOnly {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        store.setCurrentDocumentReadOnly(false)
+                    } label: {
+                        Label("Unlock Editing", systemImage: "lock.open")
+                    }
                 }
             }
 
@@ -64,13 +85,44 @@ struct EditorView: View {
                     }
                 }
             }
+
+            if horizontalSizeClass != .compact {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        ForEach(RegularEditorDisplayMode.allCases) { mode in
+                            Button {
+                                regularDisplayMode = mode
+                                onFocusModeChanged?(mode.isFocused)
+                            } label: {
+                                Label(mode.title, systemImage: mode.systemImage)
+                            }
+                        }
+                    } label: {
+                        Label(regularDisplayMode.title, systemImage: regularDisplayMode.systemImage)
+                    }
+                    .keyboardShortcut("m", modifiers: [.command, .shift])
+                }
+            }
         }
         .onAppear {
             previewText = document.text
             applyDefaultModeIfNeeded()
+            if horizontalSizeClass != .compact {
+                onFocusModeChanged?(regularDisplayMode.isFocused)
+            }
+        }
+        .onDisappear {
+            onFocusModeChanged?(false)
         }
         .onChange(of: document.text) { _, newValue in
             schedulePreviewRefresh(newValue)
+        }
+        .onChange(of: horizontalSizeClass) { _, newValue in
+            if newValue == .compact {
+                onFocusModeChanged?(false)
+            } else {
+                onFocusModeChanged?(regularDisplayMode.isFocused)
+            }
         }
         .sheet(item: $shareItem) { item in
             ShareSheet(items: [item.url])
@@ -79,7 +131,7 @@ struct EditorView: View {
             NavigationStack {
                 TableOfContentsView(headings: markdownHeadings) { heading in
                     targetAnchor = heading.anchor
-                    selectedMode = .preview
+                    showPreview()
                     isTableOfContentsVisible = false
                 }
             }
@@ -100,6 +152,14 @@ struct EditorView: View {
         } message: {
             Text(pendingExternalURL?.absoluteString ?? "")
         }
+    }
+
+    private var saveStatusLabel: some View {
+        Text(store.saveState.label)
+            .font(.caption)
+            .foregroundStyle(statusColor)
+            .lineLimit(1)
+            .fixedSize()
     }
 
     private var compactEditor: some View {
@@ -126,18 +186,52 @@ struct EditorView: View {
 
     private var regularEditor: some View {
         VStack(spacing: 0) {
+            documentHeader
+
             searchBar
 
-            HStack(spacing: 0) {
+            switch regularDisplayMode {
+            case .split:
+                HStack(spacing: 0) {
+                    sourceEditor
+                        .frame(maxWidth: .infinity)
+
+                    Divider()
+
+                    preview
+                        .frame(maxWidth: .infinity)
+                }
+            case .editOnly:
                 sourceEditor
                     .frame(maxWidth: .infinity)
-
-                Divider()
-
+            case .previewOnly:
                 preview
                     .frame(maxWidth: .infinity)
             }
         }
+    }
+
+    private var documentHeader: some View {
+        HStack(spacing: 8) {
+            Image(systemName: document.kind.systemImage)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            Text(document.fileName)
+                .font(.subheadline.weight(.semibold))
+                .lineLimit(1)
+                .truncationMode(.middle)
+
+            Spacer(minLength: 12)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(Color(.systemBackground))
+        .overlay(alignment: .bottom) {
+            Divider()
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(document.fileName)
     }
 
     private var sourceEditor: some View {
@@ -150,6 +244,7 @@ struct EditorView: View {
             .scrollContentBackground(.hidden)
             .padding(12)
             .background(Color(.secondarySystemBackground))
+            .disabled(isCurrentDocumentReadOnly)
 
             if isSearchActive {
                 Text("\(searchMatchCount) matches")
@@ -159,6 +254,29 @@ struct EditorView: View {
                     .padding(.vertical, 6)
                     .background(.thinMaterial, in: Capsule())
                     .padding(12)
+            }
+
+            if isCurrentDocumentReadOnly {
+                VStack(spacing: 8) {
+                    Label("Read Only", systemImage: "lock")
+                        .font(.caption.weight(.semibold))
+
+                    Text("Unlock editing before changing this external file.")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+
+                    Button {
+                        store.setCurrentDocumentReadOnly(false)
+                    } label: {
+                        Label("Unlock Editing", systemImage: "lock.open")
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.small)
+                }
+                .padding(12)
+                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8))
+                .padding(12)
             }
         }
     }
@@ -258,6 +376,10 @@ struct EditorView: View {
         return MarkdownHTMLRenderer.searchMatchCount(in: currentText, query: searchQuery)
     }
 
+    private var isCurrentDocumentReadOnly: Bool {
+        store.currentDocument?.isReadOnly ?? document.isReadOnly
+    }
+
     private func schedulePreviewRefresh(_ text: String) {
         previewTask?.cancel()
         previewTask = Task {
@@ -278,6 +400,15 @@ struct EditorView: View {
             selectedMode = .edit
         case .preview:
             selectedMode = .preview
+        }
+    }
+
+    private func showPreview() {
+        if horizontalSizeClass == .compact {
+            selectedMode = .preview
+        } else if regularDisplayMode == .editOnly {
+            regularDisplayMode = .previewOnly
+            onFocusModeChanged?(true)
         }
     }
 
@@ -373,6 +504,37 @@ private enum EditorMode: String, CaseIterable, Identifiable {
         switch self {
         case .edit: "pencil"
         case .preview: "doc.richtext"
+        }
+    }
+}
+
+private enum RegularEditorDisplayMode: String, CaseIterable, Identifiable {
+    case split
+    case editOnly
+    case previewOnly
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .split: "Split"
+        case .editOnly: "Edit Only"
+        case .previewOnly: "Preview Only"
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .split: "rectangle.split.2x1"
+        case .editOnly: "pencil"
+        case .previewOnly: "doc.richtext"
+        }
+    }
+
+    var isFocused: Bool {
+        switch self {
+        case .split: false
+        case .editOnly, .previewOnly: true
         }
     }
 }

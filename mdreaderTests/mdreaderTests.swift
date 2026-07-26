@@ -72,6 +72,22 @@ final class mdreaderTests: XCTestCase {
         XCTAssertTrue(html.contains("<a href=\"https://apple.com\">Apple</a>"))
     }
 
+    func testMarkdownHTMLRendererSanitizesUnsafeLinkTargets() {
+        let html = MarkdownHTMLRenderer.render("[Bad](javascript:alert(1)) [Mail](mailto:test@example.com) [Anchor](#section)", title: "Links")
+
+        XCTAssertFalse(html.contains("javascript:"))
+        XCTAssertFalse(html.contains("mailto:"))
+        XCTAssertTrue(html.contains("<a href=\"#\">Bad</a>"))
+        XCTAssertTrue(html.contains("<a href=\"#\">Mail</a>"))
+        XCTAssertTrue(html.contains("<a href=\"#section\">Anchor</a>"))
+    }
+
+    func testMarkdownHTMLRendererEscapesLinkAttributes() {
+        let html = MarkdownHTMLRenderer.render("[Quote](https://example.com/?q=\"a&b\")", title: "Links")
+
+        XCTAssertTrue(html.contains("<a href=\"https://example.com/?q=&quot;a&amp;b&quot;\">Quote</a>"))
+    }
+
     func testMarkdownHTMLRendererSupportsTablesAndRules() {
         let markdown = """
         ***
@@ -163,6 +179,31 @@ final class mdreaderTests: XCTestCase {
         XCTAssertFalse(html.contains("img-src https:"))
     }
 
+    func testHTMLPreviewAllowsSameDocumentAnchorNavigation() throws {
+        let currentURL = try XCTUnwrap(URL(string: "file:///Documents/README.md#top"))
+        let targetURL = try XCTUnwrap(URL(string: "file:///Documents/README.md#install"))
+
+        XCTAssertEqual(HTMLPreview.linkPolicy(for: targetURL, currentURL: currentURL), .allowInPreview)
+    }
+
+    func testHTMLPreviewPromptsForExternalWebLinks() throws {
+        let currentURL = try XCTUnwrap(URL(string: "file:///Documents/README.md"))
+        let targetURL = try XCTUnwrap(URL(string: "https://example.com/docs"))
+
+        XCTAssertEqual(HTMLPreview.linkPolicy(for: targetURL, currentURL: currentURL), .openExternally)
+    }
+
+    func testHTMLPreviewCancelsUnsupportedAndLocalPageLinks() throws {
+        let currentURL = try XCTUnwrap(URL(string: "file:///Documents/README.md"))
+        let mailURL = try XCTUnwrap(URL(string: "mailto:test@example.com"))
+        let scriptURL = try XCTUnwrap(URL(string: "javascript:alert(1)"))
+        let localFileURL = try XCTUnwrap(URL(string: "file:///Documents/Other.html"))
+
+        XCTAssertEqual(HTMLPreview.linkPolicy(for: mailURL, currentURL: currentURL), .cancel)
+        XCTAssertEqual(HTMLPreview.linkPolicy(for: scriptURL, currentURL: currentURL), .cancel)
+        XCTAssertEqual(HTMLPreview.linkPolicy(for: localFileURL, currentURL: currentURL), .cancel)
+    }
+
     func testPrivacyManifestDeclaresUserDefaultsReason() throws {
         let url = try XCTUnwrap(Bundle.main.url(forResource: "PrivacyInfo", withExtension: "xcprivacy"))
         let data = try Data(contentsOf: url)
@@ -223,6 +264,59 @@ final class mdreaderTests: XCTestCase {
         store.removeRecentDocument(recent)
 
         XCTAssertTrue(store.recentDocuments.isEmpty)
+    }
+
+    @MainActor
+    func testOpeningExternalDocumentDefaultsToReadOnly() throws {
+        let fileURL = temporaryDirectory.appendingPathComponent("External.md")
+        try "# External".write(to: fileURL, atomically: true, encoding: .utf8)
+
+        let store = DocumentStore()
+        store.open(url: fileURL)
+
+        XCTAssertEqual(store.currentDocument?.fileName, "External.md")
+        XCTAssertEqual(store.currentDocument?.isReadOnly, true)
+        XCTAssertEqual(store.saveState, .readOnly)
+
+        store.updateText("# Changed")
+
+        XCTAssertEqual(store.currentDocument?.text, "# External")
+        XCTAssertEqual(try String(contentsOf: fileURL, encoding: .utf8), "# External")
+    }
+
+    @MainActor
+    func testUnlockingExternalDocumentAllowsEditing() throws {
+        let fileURL = temporaryDirectory.appendingPathComponent("Editable.md")
+        try "# Editable".write(to: fileURL, atomically: true, encoding: .utf8)
+
+        let store = DocumentStore()
+        store.open(url: fileURL)
+        store.setCurrentDocumentReadOnly(false)
+
+        store.updateText("# Changed")
+
+        XCTAssertEqual(store.currentDocument?.isReadOnly, false)
+        XCTAssertEqual(store.currentDocument?.text, "# Changed")
+        XCTAssertEqual(store.saveState, .pending)
+    }
+
+    @MainActor
+    func testUnlockingReadOnlyDocumentReturnsToSavedStateBeforeEditing() throws {
+        let fileURL = temporaryDirectory.appendingPathComponent("Unlock.md")
+        try "# Unlock".write(to: fileURL, atomically: true, encoding: .utf8)
+
+        let store = DocumentStore()
+        store.open(url: fileURL)
+
+        XCTAssertEqual(store.saveState, .readOnly)
+
+        store.setCurrentDocumentReadOnly(false)
+
+        if case .saved = store.saveState {
+            // Expected.
+        } else {
+            XCTFail("Expected saved state after unlocking, got \(store.saveState)")
+        }
     }
 
     @MainActor

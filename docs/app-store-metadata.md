@@ -35,3 +35,27 @@ Reviewers can test by opening `.md`, `.markdown`, `.html`, `.htm`, or `.txt` fil
 - HTML or TXT preview
 - Settings
 - Export/share sheet
+
+## Local Release Checks
+
+Run this before preparing screenshots, TestFlight, or App Store upload:
+
+```bash
+bash scripts/validate_app_store_ready.sh
+```
+
+This checks the static App Store requirements that do not require a working Simulator runtime: bundle IDs, app name, document handler rank, privacy manifest, app icon dimensions, version/build numbers, and iPhone+iPad target settings.
+
+## GitHub CI
+
+The repository includes `.github/workflows/ios-ci.yml` for pull requests and pushes to `main`.
+
+The CI gate runs:
+
+- App Store static readiness checks
+- Debug iOS Simulator build
+- iOS Simulator test bundle build
+- XCTest execution on the first available iPhone Simulator
+- Release iPhone/iPad build with code signing disabled
+
+The workflow does not upload to App Store Connect and does not store signing certificates. TestFlight and App Store upload should still be done from Xcode Organizer with the paid Apple Developer Team selected.

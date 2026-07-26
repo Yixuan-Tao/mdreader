@@ -14,6 +14,14 @@ enum DocumentKind: String, Codable, CaseIterable {
         }
     }
 
+    var systemImage: String {
+        switch self {
+        case .markdown: "doc.richtext"
+        case .html: "chevron.left.forwardslash.chevron.right"
+        case .text: "doc.text"
+        }
+    }
+
     var exportExtension: String {
         switch self {
         case .markdown: "html"
@@ -43,15 +51,17 @@ struct EditableDocument: Identifiable, Equatable {
     var fileName: String
     var text: String
     var isModified: Bool
+    var isReadOnly: Bool
     var lastOpenedAt: Date
 
-    init(url: URL, kind: DocumentKind, text: String, id: UUID = UUID(), lastOpenedAt: Date = .now) {
+    init(url: URL, kind: DocumentKind, text: String, id: UUID = UUID(), isReadOnly: Bool = false, lastOpenedAt: Date = .now) {
         self.id = id
         self.url = url
         self.kind = kind
         self.fileName = url.lastPathComponent
         self.text = text
         self.isModified = false
+        self.isReadOnly = isReadOnly
         self.lastOpenedAt = lastOpenedAt
     }
 }

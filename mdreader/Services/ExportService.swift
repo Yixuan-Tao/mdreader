@@ -440,10 +440,46 @@ enum MarkdownHTMLRenderer {
         }
         result = replacingMatches(in: result, pattern: "\\[([^\\]]+)\\]\\(([^\\)]+)\\)") { match in
             let label = match[1]
-            let href = match[2].replacingOccurrences(of: "\"", with: "%22")
+            let href = sanitizedLinkTarget(match[2])
             return "<a href=\"\(href)\">\(label)</a>"
         }
         return highlightVisibleText(in: result, query: searchQuery)
+    }
+
+    private static func sanitizedLinkTarget(_ target: String) -> String {
+        let decodedTarget = target
+            .replacingOccurrences(of: "&amp;", with: "&")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+
+        guard !decodedTarget.isEmpty else {
+            return "#"
+        }
+
+        if decodedTarget.hasPrefix("#") {
+            return escapeAttribute(decodedTarget)
+        }
+
+        if let colonIndex = decodedTarget.firstIndex(of: ":") {
+            let prefix = decodedTarget[..<colonIndex]
+            let firstPathMarker = decodedTarget.firstIndex { character in
+                character == "/" || character == "?" || character == "#"
+            }
+
+            if firstPathMarker == nil || colonIndex < firstPathMarker! {
+                let scheme = prefix.lowercased()
+                guard scheme == "http" || scheme == "https" else {
+                    return "#"
+                }
+            }
+        }
+
+        return escapeAttribute(decodedTarget)
+    }
+
+    private static func escapeAttribute(_ value: String) -> String {
+        escape(value)
+            .replacingOccurrences(of: "\"", with: "&quot;")
+            .replacingOccurrences(of: "'", with: "&#39;")
     }
 
     private static func unorderedListItemHTML(_ item: String, searchQuery: String) -> String {

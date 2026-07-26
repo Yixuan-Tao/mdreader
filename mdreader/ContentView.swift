@@ -7,6 +7,7 @@ struct ContentView: View {
     @State private var showingPicker = false
     @State private var showingSettings = false
     @State private var didHandleStartup = false
+    @State private var columnVisibility = NavigationSplitViewVisibility.all
 
     private let startupResumeWindow: TimeInterval = 30 * 60
 
@@ -101,11 +102,13 @@ struct ContentView: View {
     }
 
     private var splitContent: some View {
-        NavigationSplitView {
+        NavigationSplitView(columnVisibility: $columnVisibility) {
             documentList
         } detail: {
             if let document = store.currentDocument {
-                EditorView(document: document)
+                EditorView(document: document) { wantsFocusedDocument in
+                    columnVisibility = wantsFocusedDocument ? .detailOnly : .all
+                }
                     .id(document.id)
             } else {
                 ContentUnavailableView(
