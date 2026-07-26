@@ -5,7 +5,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 simulators_json="$(xcrun simctl list devices available --json)"
 
-device_name="$(
+device_udid="$(
   SIMULATORS_JSON="$simulators_json" ruby <<'RUBY'
 require "json"
 
@@ -19,17 +19,27 @@ candidate = devices.values.flatten.find do |device|
 end
 
 abort "No available iPhone Simulator found" unless candidate
-puts candidate.fetch("name")
+puts candidate.fetch("udid")
 RUBY
 )"
 
-echo "Running tests on simulator: ${device_name}"
+device_name="$(
+  SIMULATORS_JSON="$simulators_json" DEVICE_UDID="$device_udid" ruby <<'RUBY'
+require "json"
+
+devices = JSON.parse(ENV.fetch("SIMULATORS_JSON")).fetch("devices")
+candidate = devices.values.flatten.find { |device| device["udid"] == ENV.fetch("DEVICE_UDID") }
+puts candidate ? candidate.fetch("name") : ENV.fetch("DEVICE_UDID")
+RUBY
+)"
+
+echo "Running tests on simulator: ${device_name} (${device_udid})"
 
 xcodebuild test \
   -project "$ROOT_DIR/mdreader.xcodeproj" \
   -scheme mdreader \
   -configuration Debug \
   -sdk iphonesimulator \
-  -destination "platform=iOS Simulator,name=${device_name}" \
+  -destination "id=${device_udid}" \
   -derivedDataPath "$ROOT_DIR/DerivedData" \
   CODE_SIGNING_ALLOWED=NO
