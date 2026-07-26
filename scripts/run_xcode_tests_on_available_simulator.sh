@@ -36,7 +36,7 @@ RUBY
 echo "Running tests on simulator: ${device_name} (${device_udid})"
 
 xcrun simctl boot "$device_udid" 2>/dev/null || true
-xcrun simctl bootstatus "$device_udid" -b
+sleep 15
 
 xcodebuild test \
   -project "$ROOT_DIR/mdreader.xcodeproj" \
@@ -44,5 +44,6 @@ xcodebuild test \
   -configuration Debug \
   -sdk iphonesimulator \
   -destination "id=${device_udid}" \
+  -destination-timeout 120 \
   -derivedDataPath "$ROOT_DIR/DerivedData" \
   CODE_SIGNING_ALLOWED=NO
