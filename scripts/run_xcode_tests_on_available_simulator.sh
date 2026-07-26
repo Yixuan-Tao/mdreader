@@ -35,6 +35,9 @@ RUBY
 
 echo "Running tests on simulator: ${device_name} (${device_udid})"
 
+xcrun simctl boot "$device_udid" 2>/dev/null || true
+xcrun simctl bootstatus "$device_udid" -b
+
 xcodebuild test \
   -project "$ROOT_DIR/mdreader.xcodeproj" \
   -scheme mdreader \
