@@ -50,8 +50,7 @@ xcodebuild test \
   -destination "id=${device_udid}" \
   -destination-timeout 120 \
   -resultBundlePath "$ROOT_DIR/TestResults.xcresult" \
-  -derivedDataPath "$ROOT_DIR/DerivedData" \
-  CODE_SIGNING_ALLOWED=NO 2>&1 | tee "$ROOT_DIR/xcodebuild-test.log"
+  -derivedDataPath "$ROOT_DIR/DerivedData" 2>&1 | tee "$ROOT_DIR/xcodebuild-test.log"
 test_status="${PIPESTATUS[0]}"
 set -e
 
