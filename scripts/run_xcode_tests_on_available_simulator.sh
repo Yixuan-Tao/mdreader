@@ -57,13 +57,19 @@ set -e
 if [[ "$test_status" -ne 0 ]]; then
   echo "XCTest failed with exit code ${test_status}. Last 200 xcodebuild log lines:"
   tail -n 200 "$ROOT_DIR/xcodebuild-test.log"
-  failure_tail="$(tail -n 80 "$ROOT_DIR/xcodebuild-test.log")"
+  failure_summary="$(
+    grep -Ei "error:|failed|testing failed|test suite|executed|xcodebuild: error|codesign|signing|provisioning|no profiles" "$ROOT_DIR/xcodebuild-test.log" \
+      | tail -n 80 || true
+  )"
+  if [[ -z "$failure_summary" ]]; then
+    failure_summary="$(tail -n 40 "$ROOT_DIR/xcodebuild-test.log")"
+  fi
 
   if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
-    escaped_failure_tail="${failure_tail//'%'/'%25'}"
-    escaped_failure_tail="${escaped_failure_tail//$'\n'/'%0A'}"
-    escaped_failure_tail="${escaped_failure_tail//$'\r'/'%0D'}"
-    echo "::error title=XCTest failure::${escaped_failure_tail}"
+    escaped_failure_summary="${failure_summary//'%'/'%25'}"
+    escaped_failure_summary="${escaped_failure_summary//$'\n'/'%0A'}"
+    escaped_failure_summary="${escaped_failure_summary//$'\r'/'%0D'}"
+    echo "::error title=XCTest failure::${escaped_failure_summary}"
   fi
 
   if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
@@ -73,7 +79,7 @@ if [[ "$test_status" -ne 0 ]]; then
       echo "Exit code: ${test_status}"
       echo
       echo '```text'
-      echo "$failure_tail"
+      echo "$failure_summary"
       echo '```'
     } >> "$GITHUB_STEP_SUMMARY"
   fi
