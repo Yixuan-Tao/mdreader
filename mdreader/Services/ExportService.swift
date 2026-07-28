@@ -449,6 +449,8 @@ enum MarkdownHTMLRenderer {
     private static func sanitizedLinkTarget(_ target: String) -> String {
         let decodedTarget = target
             .replacingOccurrences(of: "&amp;", with: "&")
+            .replacingOccurrences(of: "&quot;", with: "\"")
+            .replacingOccurrences(of: "&#39;", with: "'")
             .trimmingCharacters(in: .whitespacesAndNewlines)
 
         guard !decodedTarget.isEmpty else {

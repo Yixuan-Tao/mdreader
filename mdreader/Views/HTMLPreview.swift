@@ -149,7 +149,7 @@ enum PreviewLinkPolicy: Equatable {
 
 private extension URL {
     var isBlankPageAnchor: Bool {
-        scheme?.lowercased() == "about" && host == nil && path == "blank" && fragment != nil
+        absoluteString.lowercased().hasPrefix("about:blank#")
     }
 
     func removingFragment() -> URL {
