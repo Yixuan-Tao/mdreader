@@ -57,10 +57,7 @@ set -e
 if [[ "$test_status" -ne 0 ]]; then
   echo "XCTest failed with exit code ${test_status}. Last 200 xcodebuild log lines:"
   tail -n 200 "$ROOT_DIR/xcodebuild-test.log"
-  failure_summary="$(
-    grep -Ei "error:|failed|testing failed|test suite|executed|xcodebuild: error|codesign|signing|provisioning|no profiles" "$ROOT_DIR/xcodebuild-test.log" \
-      | tail -n 80 || true
-  )"
+  failure_summary="$(tail -n 80 "$ROOT_DIR/xcodebuild-test.log" | awk '{ if (length($0) > 240) print substr($0, 1, 240) "..."; else print }')"
   if [[ -z "$failure_summary" ]]; then
     failure_summary="$(tail -n 40 "$ROOT_DIR/xcodebuild-test.log")"
   fi
