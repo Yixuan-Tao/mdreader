@@ -6,6 +6,10 @@ INFO_PLIST="$ROOT_DIR/mdreader/Info.plist"
 PRIVACY_PLIST="$ROOT_DIR/mdreader/PrivacyInfo.xcprivacy"
 PROJECT_FILE="$ROOT_DIR/mdreader.xcodeproj/project.pbxproj"
 APP_ICON="$ROOT_DIR/mdreader/Assets.xcassets/AppIcon.appiconset/AppIcon-1024.png"
+README="$ROOT_DIR/README.md"
+PRIVACY_POLICY="$ROOT_DIR/docs/privacy-policy.md"
+SUPPORT_PAGE="$ROOT_DIR/docs/support.md"
+APP_STORE_METADATA="$ROOT_DIR/docs/app-store-metadata.md"
 
 fail() {
   echo "FAIL: $*" >&2
@@ -24,6 +28,10 @@ require_file "$INFO_PLIST"
 require_file "$PRIVACY_PLIST"
 require_file "$PROJECT_FILE"
 require_file "$APP_ICON"
+require_file "$README"
+require_file "$PRIVACY_POLICY"
+require_file "$SUPPORT_PAGE"
+require_file "$APP_STORE_METADATA"
 
 plutil -lint "$INFO_PLIST" "$PRIVACY_PLIST" "$PROJECT_FILE" >/dev/null
 
