@@ -28,4 +28,6 @@ Preview links that leave the document are confirmed before opening in the system
 
 ## Contact
 
-For support, use the GitHub repository issue tracker or the support URL listed on the App Store product page.
+For support, use the GitHub issue tracker:
+
+https://github.com/Yixuan-Tao/mdreader/issues

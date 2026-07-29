@@ -65,4 +65,10 @@ icon_alpha="$(sips -g hasAlpha "$APP_ICON" 2>/dev/null | awk '/hasAlpha/ { print
 [[ "$icon_height" == "1024" ]] || fail "App icon height must be 1024"
 [[ "$icon_alpha" == "no" ]] || fail "App icon must not contain alpha"
 
+grep -q "https://github.com/Yixuan-Tao/mdreader/issues" "$SUPPORT_PAGE" || fail "Support page must include the GitHub issue tracker URL"
+grep -q "https://github.com/Yixuan-Tao/mdreader/issues" "$PRIVACY_POLICY" || fail "Privacy policy must include a concrete support URL"
+grep -q "Privacy Policy URL:" "$APP_STORE_METADATA" || fail "App Store metadata must include a privacy policy URL"
+grep -q "Support URL:" "$APP_STORE_METADATA" || fail "App Store metadata must include a support URL"
+! grep -Rqi "support link listed on the App Store product page\\|TODO\\|TBD\\|placeholder" "$README" "$PRIVACY_POLICY" "$SUPPORT_PAGE" "$APP_STORE_METADATA" || fail "Release documents must not contain placeholder text"
+
 echo "App Store static readiness checks passed."

@@ -20,4 +20,6 @@ The app does not use analytics, advertising, tracking SDKs, accounts, cloud sync
 
 ## Contact
 
-For support, use the support link listed on the App Store product page.
+For support, use the GitHub issue tracker:
+
+https://github.com/Yixuan-Tao/mdreader/issues

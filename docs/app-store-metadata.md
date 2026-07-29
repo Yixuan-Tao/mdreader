@@ -7,6 +7,8 @@
 - Category: Productivity
 - Price: Free
 - Bundle ID: com.tommy.mdreader
+- Privacy Policy URL: https://yixuan-tao.github.io/mdreader/privacy-policy/
+- Support URL: https://github.com/Yixuan-Tao/mdreader/issues
 
 ## Keywords
 
