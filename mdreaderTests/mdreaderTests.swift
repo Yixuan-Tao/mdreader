@@ -299,6 +299,50 @@ final class mdreaderTests: XCTestCase {
     }
 
     @MainActor
+    func testIncomingURLFromExternalAppOpensDocument() throws {
+        let suiteName = "mdreaderTests.\(UUID().uuidString)"
+        let userDefaults = UserDefaults(suiteName: suiteName)!
+        defer { userDefaults.removePersistentDomain(forName: suiteName) }
+
+        let fileURL = temporaryDirectory.appendingPathComponent("Wechat.md")
+        try "# From WeChat".write(to: fileURL, atomically: true, encoding: .utf8)
+
+        let store = DocumentStore(userDefaults: userDefaults)
+        store.openIncomingURL(fileURL)
+
+        XCTAssertEqual(store.currentDocument?.fileName, "Wechat.md")
+        XCTAssertEqual(store.currentDocument?.kind, .markdown)
+        XCTAssertEqual(store.currentDocument?.text, "# From WeChat")
+        XCTAssertNil(store.errorMessage)
+        XCTAssertNotNil(userDefaults.object(forKey: "lastActiveAt") as? Date)
+    }
+
+    @MainActor
+    func testStartupRestoreDoesNotOverrideAlreadyOpenedIncomingDocument() throws {
+        let suiteName = "mdreaderTests.\(UUID().uuidString)"
+        let userDefaults = UserDefaults(suiteName: suiteName)!
+        defer { userDefaults.removePersistentDomain(forName: suiteName) }
+
+        let recentURL = temporaryDirectory.appendingPathComponent("Recent.md")
+        let incomingURL = temporaryDirectory.appendingPathComponent("Incoming.md")
+        try "# Recent".write(to: recentURL, atomically: true, encoding: .utf8)
+        try "# Incoming".write(to: incomingURL, atomically: true, encoding: .utf8)
+
+        let bookmark = try recentURL.bookmarkData(options: [], includingResourceValuesForKeys: nil, relativeTo: nil)
+        let store = DocumentStore(userDefaults: userDefaults)
+        store.recentDocuments = [
+            RecentDocument(bookmark: bookmark, fileName: "Recent.md", kind: .markdown, lastOpenedAt: Date())
+        ]
+        userDefaults.set(Date(), forKey: "lastActiveAt")
+
+        store.openIncomingURL(incomingURL)
+        store.restoreMostRecentDocumentIfRecentlyActive(maxIdleInterval: 30 * 60)
+
+        XCTAssertEqual(store.currentDocument?.fileName, "Incoming.md")
+        XCTAssertEqual(store.currentDocument?.text, "# Incoming")
+    }
+
+    @MainActor
     func testUnlockingExternalDocumentAllowsEditing() throws {
         let fileURL = temporaryDirectory.appendingPathComponent("Editable.md")
         try "# Editable".write(to: fileURL, atomically: true, encoding: .utf8)

@@ -58,6 +58,10 @@ struct ContentView: View {
         .task {
             handleStartupIfNeeded()
         }
+        .onOpenURL { url in
+            showingPicker = false
+            store.openIncomingURL(url)
+        }
         .onChange(of: scenePhase) { _, newValue in
             if newValue == .background || newValue == .inactive {
                 store.markAppActive()

@@ -81,6 +81,11 @@ final class DocumentStore: ObservableObject {
         }
     }
 
+    func openIncomingURL(_ url: URL) {
+        open(url: url)
+        markAppActive()
+    }
+
     func reopen(_ recentDocument: RecentDocument, showsUnavailableAlert: Bool = true) {
         var isStale = false
 
